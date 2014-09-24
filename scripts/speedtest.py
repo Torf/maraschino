@@ -518,7 +518,6 @@ def update_status(status, ip=None, port=None, webroot=None, script_id=None):
     path='http://%s:%s%s/xhr/script_launcher/script_status/%s/%s' % (ip, port, webroot, script_id, quote(status))
 
     h = Http()
-    h.add_credentials('user', 'pass')
     resp,content=h.request(path, "GET")
     
     if not (str(resp.status) == "200"):
