@@ -7,6 +7,8 @@ from maraschino.database import db_session
 from maraschino.models import Script
 import maraschino
 
+from urllib.parse import unquote
+
 
 @app.route('/xhr/script_launcher/') 
 @requires_auth
@@ -49,7 +51,7 @@ def xhr_script_status(script_id):
 
 @app.route('/xhr/script_launcher/script_status/<script_id>/<status_content>', methods=['GET','POST'])
 def xhr_script_status_direct(script_id, status_content):
-    status = status_content
+    status = unquote(status_content)
     if status == '':
         return jsonify({ 'status': 'error: there was no status passed in' })
 
