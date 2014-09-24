@@ -47,6 +47,25 @@ def xhr_script_status(script_id):
 
     return xhr_script_launcher()
 
+@app.route('/xhr/script_launcher/script_status/<script_id>/<status_content>', methods=['GET','POST'])
+def xhr_script_status_direct(script_id, status_content):
+    status = status_content
+    if status == '':
+        return jsonify({ 'status': 'error: there was no status passed in' })
+
+    script = Script.query.filter(Script.id == script_id).first()
+    script.status = status
+
+    try:
+        db_session.add(script)
+        db_session.commit()
+
+    except:
+        logger.log('SCRIPT_LAUNCHER :: Add Failed', 'ERROR')
+        return jsonify({ 'status': 'error' })
+
+    return xhr_script_launcher()
+
 
 @app.route('/xhr/script_launcher/start_script/<script_id>')
 @requires_auth
