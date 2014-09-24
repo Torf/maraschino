@@ -19,8 +19,7 @@ __version__ = '0.3.1'
 
 
 #you will need these
-import datetime, getopt, urllib
-
+import datetime, getopt
 import os
 import re
 import sys
@@ -57,6 +56,8 @@ try:
     from Queue import Queue
 except ImportError:
     from queue import Queue
+
+from urllib.parse import urlencode
 
 try:
     from urlparse import urlparse
@@ -514,9 +515,11 @@ def update_status(status, ip=None, port=None, webroot=None, script_id=None):
     path='http://%s:%s%s/xhr/script_launcher/script_status/%s' % (ip, port, webroot, script_id)
 
     data = [('status', status)]
-    data=urllib.urlencode(data)
+    data=urlencode(data)
 
-    req=Request(path, data)
+    binary_data = data.encode('utf8')
+
+    req=Request(path, binary_data)
     req.add_header("Content-type", "application/x-www-form-urlencoded")
     open=urlopen(req)
     page = open.read()
