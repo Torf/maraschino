@@ -20,6 +20,7 @@ __version__ = '0.3.1'
 
 #you will need these
 import datetime, getopt
+
 import os
 import re
 import sys
@@ -52,12 +53,14 @@ try:
 except ImportError:
     from http.client import HTTPConnection, HTTPSConnection
 
+from httplib2 import Http
+
 try:
     from Queue import Queue
 except ImportError:
     from queue import Queue
 
-from urllib.parse import urlencode
+from urllib.parse import quote
 
 try:
     from urlparse import urlparse
@@ -480,7 +483,7 @@ def speedtest(ip=None, port=None, webroot=None, script_id=None):
     print_()
     print_('Upload: %0.2f M%s/s' % ((ulspeed / 1000 / 1000) * 8, 'b'))
 
-    update_status("%s ms - ↓%0.2f Mb/s  ↑%0.2f Mb/s" % (best['latency'], (dlspeed / 1000 / 1000) * 8, (ulspeed / 1000 / 1000) * 8)
+    update_status("%s ms - %0.2f Mbps - %0.2f Mbps" % (best['latency'], (dlspeed / 1000 / 1000) * 8, (ulspeed / 1000 / 1000) * 8)
         , ip, port, webroot, script_id)
 
 
@@ -512,19 +515,17 @@ def main(argv):
 def update_status(status, ip=None, port=None, webroot=None, script_id=None):
     if script_id == None or ip == None or port == None:
         return 
-    path='http://%s:%s%s/xhr/script_launcher/script_status/%s' % (ip, port, webroot, script_id)
+    path='http://%s:%s%s/xhr/script_launcher/script_status/%s/%s' % (ip, port, webroot, script_id, quote(status))
 
-    data = [('status', status)]
-    data=urlencode(data)
-
-    binary_data = data.encode('utf8')
-
-    req=Request(path, binary_data)
-    req.add_header("Content-type", "application/x-www-form-urlencoded")
-    open=urlopen(req)
-    page = open.read()
+    h = Http()
+    h.add_credentials('user', 'pass')
+    resp,content=h.request(path, "GET")
+    
+    if not (str(resp.status) == "200"):
+        print_("Error %s !" % resp.status)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
 
 # vim:ts=4:sw=4:expandtab
+
