@@ -68,7 +68,7 @@ $(document).ready(function() {
       $.extend(settings, customsettings);
     }
 
-    var url = WEBROOT + '/xhr/' + module;
+    var url = WEBROOT + '/xhr/' + module + '/';
 
     for (var i=0; i < settings.params.length; i++) {
       url += '/' + settings.params[i];
