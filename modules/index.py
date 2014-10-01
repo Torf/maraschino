@@ -92,7 +92,7 @@ def index():
         background=background,
         applications=applications,
         show_tutorial=unorganised_modules.count() == 0,
-        webroot="https://front.kate.cx",
+        webroot="",
         kiosk=maraschino.KIOSK,
         new_tab=new_tab,
         title_color=get_setting_value('title_color'),
